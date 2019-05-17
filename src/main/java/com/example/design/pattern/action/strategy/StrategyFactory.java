@@ -26,14 +26,11 @@ public class StrategyFactory {
     private Map<String, StrategyService> targetStrategyService;
 
     public StrategyService getStrategyServiceByServiceName(String tag) {
-        StrategyService strategyService = strategyServiceMap.getOrDefault(tag, defaultStrategy);
-        if (null != strategyService) {
-            targetStrategyService.put(tag, strategyService);
-        }
-        return strategyService;
+        return strategyServiceMap.getOrDefault(tag, defaultStrategy);
     }
 
     //自定义tag。。可以考虑选定一些生成规则来区分  业务线--策略几
+    //String name =strategyFactory.getClass().getSimpleName(); 也可以根据类名直接调用相关识别码，比如类型转换
     public StrategyService getStrategyServiceByBusiness(String tag) {
         StrategyService strategyService = targetStrategyService.getOrDefault(tag, strategyServiceList.stream().filter(f -> {
             Strategy[] annotations = f.getClass().getAnnotationsByType(Strategy.class);
