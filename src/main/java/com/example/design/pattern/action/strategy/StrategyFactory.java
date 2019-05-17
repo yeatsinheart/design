@@ -23,20 +23,28 @@ public class StrategyFactory {
     private List<StrategyService> strategyServiceList;
     @Resource
     private StrategyService defaultStrategy;
+    private Map<String, StrategyService> targetStrategyService;
 
     public StrategyService getStrategyServiceByServiceName(String tag) {
-        return strategyServiceMap.getOrDefault(tag, defaultStrategy);
+        StrategyService strategyService = strategyServiceMap.getOrDefault(tag, defaultStrategy);
+        if (null != strategyService) {
+            targetStrategyService.put(tag, strategyService);
+        }
+        return strategyService;
     }
 
     //自定义tag。。可以考虑选定一些生成规则来区分  业务线--策略几
     public StrategyService getStrategyServiceByBusiness(String tag) {
-        strategyServiceList.stream().filter(f -> {
+        StrategyService strategyService = targetStrategyService.getOrDefault(tag, strategyServiceList.stream().filter(f -> {
             Strategy[] annotations = f.getClass().getAnnotationsByType(Strategy.class);
             Strategy strategy = Arrays.stream(annotations).filter(a -> StringUtils.equals(tag, a.value()))
                     .findFirst()
                     .orElse(null);
             return null == strategy ? false : true;
-        }).findFirst().orElse(defaultStrategy);
-        return strategyServiceMap.getOrDefault(tag, defaultStrategy);
+        }).findFirst().orElse(defaultStrategy));
+        if (null != strategyService) {
+            targetStrategyService.put(tag, strategyService);
+        }
+        return strategyService;
     }
 }
