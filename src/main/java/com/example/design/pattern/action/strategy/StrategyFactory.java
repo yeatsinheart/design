@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @program: design
@@ -23,7 +24,7 @@ public class StrategyFactory {
     private List<StrategyService> strategyServiceList;
     @Resource
     private StrategyService defaultStrategy;
-    private Map<String, StrategyService> targetStrategyService;
+    private ConcurrentHashMap<String, StrategyService> targetStrategyService;
 
     public StrategyService getStrategyServiceByServiceName(String tag) {
         return strategyServiceMap.getOrDefault(tag, defaultStrategy);
